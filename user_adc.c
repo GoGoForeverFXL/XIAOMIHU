@@ -1,7 +1,7 @@
 /*
  * user_adc.c
  *
- *  Created on: 2019��12��28��
+ *  Created on: 2019年12月28日
  *      Author: 22162
  */
 /******************************************************************************
@@ -191,7 +191,7 @@ INT32 TempAdcInit(void)
 	ret1 = AdcTempInit(TempChanlEnalbe.all,AdcDelay,&TempNum);
 	if(ret1 != 0)
 	{
-		//����¼���Ϣ����ʼ��ADоƬ����
+		//输出事件信息，初始化AD芯片错误
 		return -1;
 	}
 	return 0;
@@ -302,11 +302,11 @@ FLOAT32 FindPt100Temp(FLOAT32 data)
     INT16  Ctop = 0;
     INT16  Cbottom=399;
 
-	//TODO:�õ����80.7ŷ����Ӧ-49�ȣ��ж�Ϊpt100���ߡ�����ʱ������0ŷ���ң�Ϊ�ɿ������
-	//ֻҪ�����Ӧ�ĸ��¶Ȳ����ܴﵽ������Ϊ���ߣ���ȡ-49����Ϊ����������������ʱ��ǿ��
-	//�¶�Ϊ260�ȣ��������¹��ϡ�֮�����ù��½��б���������ΪĿǰ������û�е��±�����ֻ��
-	//��ʱ���ù��¹��Ͻ��б�����
-	if (data <= 80.70)	//@�ж�Ϊpt100���� lf:2020/11/12
+	//TODO:用电阻≤80.7欧（对应-49度）判定为pt100断线。断线时电阻在0欧左右，为可靠起见，
+	//只要电阻对应的负温度不可能达到，就认为断线，故取-49度作为条件。当条件满足时，强制
+	//温度为260度，触发过温故障。之所以用过温进行保护，是因为目前程序里没有低温保护，只能
+	//临时借用过温故障进行保护。
+	if (data <= 80.70)	//@判定为pt100断线 lf:2020/11/12
 	{
 		temp = 260;
 	}
@@ -341,8 +341,8 @@ FLOAT32 FindPt100Temp(FLOAT32 data)
 }
 /******************************************************************************
  *Name          :LfpFcHz
- *Function      : ��ͨ�˲������(LfpFc350Hz)
-                     sample rate = 16KHz,FC = 35Hz,��ô
+ *Function      : 低通滤波器设计(LfpFc350Hz)
+                     sample rate = 16KHz,FC = 35Hz,那么
                      k = 6.283*35/16000 = 0.137444680625
                      k1=1/(1+k) = 0.8791636349739
                      k2=1-k1 = 0.1208363650261
@@ -423,7 +423,7 @@ INT32 HumiditySensorInit(void)
 	ret1 = HumidityTempSensorInit(HumidityChanlEnalbe.all,AdcDelay,&HumidityNum);
 	if(ret1 != 0)
 	{
-		//����¼���Ϣ����ʼ��ADоƬ����
+		//输出事件信息，初始化AD芯片错误
 		return -1;
 	}
 	return 0;
